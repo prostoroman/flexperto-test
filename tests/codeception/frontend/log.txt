@@ -1,0 +1,35 @@
+Codeception PHP Testing Framework v2.0.16
+Powered by PHPUnit 4.7.7 by Sebastian Bergmann and contributors.
+
+[1mTests\codeception\frontend.acceptance Tests (6) [22m--------------------------------------------------------------------------------------------------
+[35;1mEnsure that signup works[39;22m (tests\codeception\frontend\acceptance\SignupCest::testUserSignup)                                                  Ok
+[35;1mEnsure that about works[39;22m (AboutCept)                                                                                                          Ok
+[35;1mEnsure that contact works[39;22m (ContactCept)                                                                                                      Ok
+[35;1mEnsure that home page works[39;22m (HomeCept)                                                                                                       Ok
+[35;1mEnsure login page works[39;22m (LoginCept)                                                                                                          Ok
+[35;1mLogin view and update my profile[39;22m (UserCept)                                                                                                  Ok
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+[1mTests\codeception\frontend.functional Tests (5) [22m----------------------------------------------------------------------------------------------
+[35;1mEnsure that signup works[39;22m (tests\codeception\frontend\functional\SignupCest::testUserSignup)                                              Ok
+[35;1mEnsure that about works[39;22m (AboutCept)                                                                                                      Ok
+[35;1mEnsure that contact works[39;22m (ContactCept)                                                                                                  Ok
+[35;1mEnsure that home page works[39;22m (HomeCept)                                                                                                   Ok
+[35;1mEnsure login page works[39;22m (LoginCept)                                                                                                      Ok
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+[1mTests\codeception\frontend.unit Tests (8) [22m----------------------------------------------------------------------------------------------------------------------
+[35;1mTest contact[39;22m (tests\codeception\frontend\unit\models\ContactFormTest::testContact)                                                                         Ok
+[35;1mTest send email wrong user[39;22m (tests\codeception\frontend\models\PasswordResetRequestFormTest::testSendEmailWrongUser)                                        Ok
+[35;1mTest send email correct user[39;22m (tests\codeception\frontend\models\PasswordResetRequestFormTest::testSendEmailCorrectUser)                                    Ok
+[35;1mTest reset wrong token[39;22m (tests\codeception\frontend\unit\models\ResetPasswordFormTest::testResetWrongToken)                                                 Ok
+[35;1mTest reset empty token[39;22m (tests\codeception\frontend\unit\models\ResetPasswordFormTest::testResetEmptyToken)                                                 Ok
+[35;1mTest reset correct token[39;22m (tests\codeception\frontend\unit\models\ResetPasswordFormTest::testResetCorrectToken)                                             Ok
+[35;1mTest correct signup[39;22m (tests\codeception\frontend\unit\models\SignupFormTest::testCorrectSignup)                                                             Ok
+[35;1mTest not correct signup[39;22m (tests\codeception\frontend\unit\models\SignupFormTest::testNotCorrectSignup)                                                      Ok
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Time: 11.3 seconds, Memory: 35.00Mb
+
+[30;42mOK (19 tests, 89 assertions)[0m

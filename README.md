@@ -28,7 +28,7 @@ Then, you can login into the application with same email address and password at
 
 ### Tests
 I've created 1 acceptance test to check user profile and edit mobile phone
-To run tests go to test/ folder in follow instructions in README.
+To run tests open [tests/](tests/) folder and follow instructions.
 
 ### The initial task
 https://bitbucket.org/designtesbrot/flexperto-fat

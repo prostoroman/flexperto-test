@@ -75,26 +75,18 @@ class UserController extends Controller
                     return $this->redirect(['update']);
                 }
 
-                // check dir and try to create
-                $uploadDir = \Yii::getAlias('@webroot') . '/' . self::AVATAR_UPLOAD_DIR;
-
-                if (!is_dir($uploadDir)) {
-                    try {
-                        mkdir($uploadDir);
-                    } catch (\Exception $e) {
-                        // better to change to log message
-                        Yii::$app->session->setFlash('error', $e->getMessage());
-                        $this->redirect(['index']);
-                    }
-                }
-
+                $uploadDir = Yii::getAlias('@webroot') . '/' . self::AVATAR_UPLOAD_DIR;
                 // unique filename md5 from username to avoid encoding problems
-                $avatarName = md5($model->username);
-                $avatarUrl = self::AVATAR_UPLOAD_DIR . '/'. $avatarName . '.' . $model->avatar_file->extension;
-                $avatarFilePath = $uploadDir . '/' . $avatarName . '.' . $model->avatar_file->extension;
+                $avatarName = md5($model->username) . '.' . $model->avatar_file->extension;
+                $avatarUrl = self::AVATAR_UPLOAD_DIR . $avatarName;
+                $avatarFilePath = $uploadDir . $avatarName;
 
                 $model->avatar_url = $avatarUrl;
-                $model->avatar_file->saveAs($avatarFilePath);
+                if (!$model->avatar_file->saveAs($avatarFilePath)) {
+                    Yii::$app->session->setFlash('error', 'Sorry! Error while saving a file.');
+
+                    return $this->redirect(['update']);
+                }
 
                 $model->avatar_file = null;
             }

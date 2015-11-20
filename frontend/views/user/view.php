@@ -27,12 +27,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-sm-3">
             <?php if ($model->avatar_url): ?>
-                <img src="<?= $model->avatar_url ?>" class="img-rounded img-responsive">
+                <img src="<?= Yii::getAlias('@web') . '/' . $model->avatar_url ?>" class="img-rounded img-responsive">
                 <p class="text-center">
                     <a class="btn btn-sm btn-danger" href="<?= Url::to(['user/remove-avatar']); ?>">Remove avatar</a>
                 </p>
             <?php else: ?>
-                <img src="img/default-avatar.gif" class="img-rounded img-responsive">
+                <img src="<?= Yii::getAlias('@web') ?>/img/default-avatar.gif" class="img-rounded img-responsive">
             <?php endif ?>
         </div>
         <div class="col-sm-9">

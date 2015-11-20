@@ -25,7 +25,7 @@ class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
-    const MAXFILESIZE = 1024*1024;
+    const MAXFILESIZE = 1048576;
 
     public $avatar_file;
 
@@ -87,7 +87,7 @@ class User extends ActiveRecord implements IdentityInterface
             'password_new' => 'New password',
             'password_confirm' => 'Confirm password',
             'created_at' => 'Registered at',
-            'avatar_file' => 'Upload new avatar (max. '. bcdiv(self::MAXFILESIZE, 1048576, 1) . 'MB)',
+            'avatar_file' => 'Upload new avatar (max. '. $this->filesizeFormatted(self::MAXFILESIZE) . ')',
         ];
     }
 
@@ -220,5 +220,28 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    /**
+     * Formats filesize in human readable way.
+     *
+     * @param integer $byted
+     * @return string Formatted Filesize, e.g. "113.24 MB".
+     */
+    protected function filesizeFormatted($bytes)
+    {
+        if ($bytes >= 1073741824) {
+            return number_format($bytes / 1073741824, 2) . ' GB';
+        } elseif ($bytes >= 1048576) {
+            return number_format($bytes / 1048576, 2) . ' MB';
+        } elseif ($bytes >= 1024) {
+            return number_format($bytes / 1024, 2) . ' KB';
+        } elseif ($bytes > 1) {
+            return $bytes . ' bytes';
+        } elseif ($bytes == 1) {
+            return '1 byte';
+        } else {
+            return '0 bytes';
+        }
     }
 }

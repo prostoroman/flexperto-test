@@ -65,46 +65,15 @@ class UserController extends Controller
         $model = $this->findModel($this->getCurrentUserId());
 
         if ($model->load(Yii::$app->request->post())) {
-            // Update avatar
-            if (UploadedFile::getInstance($model, 'avatar_file')) {
-                $model->avatar_file = UploadedFile::getInstance($model, 'avatar_file');
-
-                if ($model->avatar_file->getHasError()) {
-                    Yii::$app->session->setFlash('error', $model->avatar_file->error);
-
-                    return $this->redirect(['update']);
-                }
-
-                $uploadDir = Yii::getAlias('@webroot') . '/' . self::AVATAR_UPLOAD_DIR;
-                // unique filename md5 from username to avoid encoding problems
-                $avatarName = md5($model->username) . '.' . $model->avatar_file->extension;
-                $avatarUrl = self::AVATAR_UPLOAD_DIR . $avatarName;
-                $avatarFilePath = $uploadDir . $avatarName;
-
-                $model->avatar_url = $avatarUrl;
-                if (!$model->avatar_file->saveAs($avatarFilePath)) {
-                    Yii::$app->session->setFlash('error', 'Sorry! Error while saving a file.');
-
-                    return $this->redirect(['update']);
-                }
-
-                $model->avatar_file = null;
-            }
-
-            // Update password
-            if ($model->password_new) {
-                $model->setPassword($model->password_new);
-            }
-
-            Yii::$app->session->setFlash('success', 'You profile has been updated.');
+            $model = $this->updateAvatar($model);
+            $model = $this->updatePassword($model);
             $model->save();
 
-            return $this->redirect(['index']);
+            Yii::$app->session->setFlash('success', 'You profile has been updated');
 
+            return $this->redirect(['index']);
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            return $this->render('update', ['model' => $model]);
         }
     }
 
@@ -117,8 +86,7 @@ class UserController extends Controller
     {
         $model = $this->findModel($this->getCurrentUserId());
 
-        // here we need to delete avatar file
-        // then logout user
+        // here we need to delete avatar file then logout user
         Yii::$app->user->logout();
         $model->delete();
 
@@ -149,6 +117,7 @@ class UserController extends Controller
     {
         return Yii::$app->user->identity->id;
     }
+
     /**
      * Deletes an existing avatar.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -159,26 +128,84 @@ class UserController extends Controller
     {
         $model = $this->findModel($this->getCurrentUserId());
 
-        if ($model->avatar_url) {
-            // then delete the file
-            $filePath = \Yii::getAlias('@webroot') . '/' . $model->avatar_url;
+        if (!$model->avatar_url) {
+            return $this->redirect(['index']);
+        }
 
+        if ($this->deleteFile(Yii::getAlias('@webroot') . '/' . $model->avatar_url)) {
             $model->avatar_url = '';
             $model->save();
-
-            // Delete avatar file
-            if (is_file($filePath)) {
-                try {
-                    unlink($filePath);
-                } catch (\Exception $e) {
-                    // we can put it to log file
-                    Yii::$app->session->setFlash('error', $e->getMessage());
-                    $this->redirect(['index']);
-                }
-
-            }
         }
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Update avatar
+     * @param User $model
+     * @return User $model
+     */
+    protected function updateAvatar($model)
+    {
+        $uploadFile = UploadedFile::getInstance($model, 'avatar_file');
+
+        if ($uploadFile) {
+            // Update avatar and give unique filename md5 from username to avoid encoding problems
+            $model->avatar_url = $this->processUpload($uploadFile, md5($model->username));
+        }
+        return $model;
+    }
+
+    /**
+     * Update password
+     * @param User $model
+     * @return User $model
+     */
+    protected function updatePassword($model)
+    {
+        if ($model->password_new) {
+            $model->setPassword($model->password_new);
+        }
+        return $model;
+    }
+
+    /**
+     * Process a file uploading
+     * If upload is successful return uploaded path
+     * @param UploadedFile $uploadedFile
+     * @param string $filename
+     * @return string
+     * @throws \Exception if there is error on upload or save
+     */
+    protected function processUpload($uploadedFile, $filename)
+    {
+        $relativePath = self::AVATAR_UPLOAD_DIR . $filename . '.' . $uploadedFile->extension;
+        $absolutePath = Yii::getAlias('@webroot') . '/' . $relativePath;
+
+        if ($uploadedFile->error || !$uploadedFile->saveAs($absolutePath)) {
+            throw new \Exception('There is an error while uploading a file');
+        }
+
+        return $relativePath;
+    }
+
+    /**
+     * Deletes a file
+     * @param string $path
+     * @return bool
+     * @throws \Exception if there is error on delete
+     */
+    protected function deleteFile($path)
+    {
+        if (!is_file($path)) {
+            return false;
+        }
+        try {
+            unlink($path);
+        } catch (\Exception $e) {
+            throw new \Exception('There is an error while deleting a file');
+        }
+
+        return true;
     }
 }
